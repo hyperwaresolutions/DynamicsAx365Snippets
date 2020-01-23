@@ -1,0 +1,40 @@
+static void findOnhand(ItemId _itemId)
+   {
+      InventSum               inventSum;
+      InventDim               inventDim;
+      InventTable             inventTable;
+      Query                   query;
+      QueryBuildDataSource    qbs;
+      QueryBuildRange         qbr;
+      QueryRun                qr;
+      ;
+
+      query = new Query();
+      qbs = query.addDataSource(tablenum(InventSum));
+      qbs.addRange(fieldNum(InventSum, ItemId)).value(_itemId);
+      qbs.addRange(fieldNum(InventSum, Closed)).value(QueryValue(NoYes::No));
+      InventSum::queryAddSumFields(query.dataSourceTable(tablenum(InventSum)));
+
+      qbs = qbs.addDataSource(tablenum(InventDim));
+      qbs.orderMode(OrderMode::GroupBy);
+      //You can add add/remove inventory dimensions
+      qbs.addGroupByField(fieldNum(InventDim, InventSiteId));
+      qbs.addGroupByField(fieldNum(InventDim, InventLocationId));
+    
+      qbs.relations(false);
+      qbs.addLink(
+        fieldnum(InventSum, InventDimId),
+        fieldNum(InventDim, InventDimId));
+    
+      qr = new Queryrun(query);
+    
+      while(qr.next())
+      {
+         inventSum   = qr.get(tableNum(InventSum));
+         inventDim   = qr.get(tableNum(inventDim));
+         if (inventSum.AvailPhysical > 0)
+        info (Strfmt("%1 - %2 - %3 - %4 - %5", inventSum.AvailPhysical, inventDim.InventSiteId,
+        inventDim.InventLocationId, inventDim.inventBatchId, inventDim.wMSLocationId));
+      }
+
+   }

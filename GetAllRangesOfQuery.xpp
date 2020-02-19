@@ -1,0 +1,31 @@
+/**
+ * Get a string of all ranges applied to a query.
+ *
+ *
+ * @return all ranges in a string format "Label: value"
+ */
+
+private str getQueryRanges(QueryRun _queryRun)
+{
+    str retVal;
+    int i, j, ranges;
+    QueryBuildRange         queryRange;
+    DictTable               dictTable;
+    DictField               dictField;
+    Query query = _queryRun.query();
+    for(i = 1; i <= query.dataSourceCount(); i++)
+    {
+        ranges = query.dataSourceNo(i).rangeCount();
+        dictTable = new DictTable(query.dataSourceNo(i).table());
+        for (j = 1; j <= ranges; j++)
+        {
+        queryRange = _queryRun.query().dataSourceNo(i).range(j);
+        dictField = new DictField(query.dataSourceNo(i).table(), fieldname2id( query.dataSourceNo(i).table(), queryRange.AOTname()));
+        if(queryRange.value())
+        {
+            retVal += strfmt("%1: %2 ", dictField.label(), queryRange.value());
+        }
+        }
+    }
+    return retVal;
+}

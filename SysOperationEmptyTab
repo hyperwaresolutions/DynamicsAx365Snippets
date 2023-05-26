@@ -1,0 +1,20 @@
+/*
+  On numerous occasions, we have employed the SysOperation framework without employing any data contract. 
+  In such instances, upon executing the class to initiate the dialog, an empty tab becomes visible. 
+  To designate the batch tab as the default selection, simply include this code within your controller class.
+*/
+
+protected void dialogPostRun()
+{
+  sysOperationDialog sysOperationDialog;
+  DialogTabPage batchTab;
+  FormRun formRun;
+  ;
+
+  super();
+
+  sysOperationDialog = this.dialog() as SysOperationDialog;
+  formRun = sysOperationDialog.formRun();
+  batchTab = sysOperationDialog.batchDialogTabPage();
+  formRun.selectControl(batchTab.control());
+}

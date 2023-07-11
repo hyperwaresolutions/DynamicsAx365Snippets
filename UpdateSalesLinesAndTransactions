@@ -1,0 +1,15 @@
+/*
+* If you are updating the SalesQty of a SalesLine, sometimes you need also update the related transaction.
+* This i the best way to do that
+*/
+
+SalesLine salesLine;
+;
+
+select forUpdate salesLine where salesLine.RecId == [your recid]
+salesLine.SalesQty += 100;
+//Update amounts after applying discounts.
+salesLine::modifySalesQty(salesLine, SalesLineupdate.inventDim());
+//Update related transactions
+InventMovement::bufferSetRemainQty(salesLine);
+salesLineUpdate.update();

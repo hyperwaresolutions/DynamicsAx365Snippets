@@ -1,0 +1,19 @@
+//Copy Data between two tables by Field name
+
+private void buf2BufByFieldName(
+    Common  _from,
+    Common  _to,
+    TableScope _scope = TableScope::CurrentTableOnly
+    )
+    {
+        DictTable   dictTableFrom = new DictTable(_from.TableId);
+        DictTable   dictTableTo = new DictTable(_to.TableId);
+        FieldId     fieldId   = dictTableFrom.fieldNext(0, _scope);
+        FieldName   fieldName = dictTableFrom.fieldName(fieldId);
+        while (fieldId && ! isSysId(fieldId))
+        {
+            _to.(dictTableTo.fieldName2Id(fieldName)) = _from.(dictTableFrom.fieldName2Id(fieldName));
+            fieldId         = dictTableFrom.fieldNext(fieldId, _scope);
+            fieldName = dictTableFrom.fieldName(fieldId);
+        }
+    }

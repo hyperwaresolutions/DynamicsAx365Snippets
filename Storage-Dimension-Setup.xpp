@@ -1,0 +1,12 @@
+//Whith this snippet we are checking if the warehouse management is active for that Item
+
+private NoYesId checkStorageDimensionGroup()
+{
+    EcoResStorageDimensionGroupFldSetup     ecoResStorageDimensionGroupFldSetup;
+ 
+    ecoResStorageDimensionGroupFldSetup = EcoResStorageDimensionGroupFldSetup::findByDimensionGroupFieldId(InventTable::find("ITEMID").storageDimensionGroup(), fieldNum(InventDim, InventLocationId));
+    if(ecoResStorageDimensionGroupFldSetup.isActive)
+    {
+        //do something
+    }
+}

@@ -1,0 +1,40 @@
+//AX 2012 - Create Production Order or Batch Order
+
+ProdQty         qty     = 100;
+ItemId          item    = 'D0005';
+ProdTable       prodtable;
+InventTable     inventTable;
+InventDim       inventDim;
+;
+// Initialize InventTable
+inventTable = inventTable::find(item);
+// Initialize the base values
+prodtable.initValue();
+prodtable.initFromInventTable(inventTable);
+prodtable.ItemId                = inventTable.ItemId;
+prodtable.DlvDate               = today();
+prodtable.QtySched              = qty;
+prodtable.RemainInventPhysical  = qty;
+// Initialize InventDim (Obrigatory)
+inventDim.initValue();
+// Set the active BOM and Route
+prodtable.BOMId = BOMVersion::findActive(prodtable.ItemId,
+                                            prodtable.BOMDate,
+                                            prodtable.QtySched,
+                                            inventDim).BOMId;
+prodtable.RouteId = RouteVersion::findActive(prodtable.ItemId,
+                                                prodtable.BOMDate,
+                                                prodtable.QtySched,
+                                                inventDim).RouteId;
+// Initialize BOMVersion
+prodtable.initBOMVersion();
+// Initialize RouteVersion
+prodtable.initRouteVersion();
+//Use ProdTableType class to create the production order
+//If you want to create a batch order, remove comment from the row below
+//prodtable.ProdType = ProdType::Process;
+prodtable.type().insert();
+// Inform Production Order Id
+setPrefix( 'Production Order');
+setPrefix( 'Production Order Number');
+info(prodtable.ProdId);

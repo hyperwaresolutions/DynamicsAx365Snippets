@@ -1,0 +1,19 @@
+//Checking if a country is in the EU
+
+private NoYesId isDeliveryAddressInEU(CustInvoiceJour _custInvoiceJour)
+{
+    NoYesId                         inEU = NoYes::No;
+    LogisticsAddressCountryRegionId countryRegionId;
+ 
+    if(_custInvoiceJour.DeliveryPostalAddress)
+    {
+        countryRegionId = LogisticsPostalAddress::findRecId(_custInvoiceJour.DeliveryPostalAddress).CountryRegionId;
+ 
+        if(countryRegionId)
+        {
+            inEU = IntrastatCountryRegionParameters::isInEU(countryRegionId);
+        }
+    }
+ 
+    return inEU;
+}
